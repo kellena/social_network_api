@@ -16,9 +16,11 @@ module.exports = {
         Thoughts.findOne({ _id: req.params.thoughtsId })
 
             .then((thoughts) =>
+
                 !thoughts
                     ? res.status(404).json({ message: 'No thoughts found with that id' })
                     : res.json(thoughts)
+                    
             )
 
             .catch((err) => res.status(500).json(err));
@@ -54,6 +56,42 @@ module.exports = {
 
     },
 
+    updateThought(req,res){
+
+        Thoughts.findOneAndUpdate(
+
+            {_id: req.params.thoughtId},
+            {$set: req.body},
+            {runValidators: true, new: true}
+        )
+        
+            .then((thought)=>
+
+                !thought
+                    ? res.status(404).json({message: "No thought found with this ID"})
+                    : res.json(thought)
+            )
+
+          .catch((err)=> res.status(500).json(err));
+
+    },
+
+    deleteThought(req, res){
+        
+        Thoughts.findOneAndDelete({ _id: req.params.thoughtId })
+
+            .then((thoughts)=>
+
+                !thoughts
+                    ? res.status(404).json({message: "No thought found with this ID"})
+                    : res.json({message: "Thought has been deleted"})
+
+            )
+
+            .catch((err)=> res.status(500).json(err));
+    
+    },
+
     createReaction(req, res) {
 
         Thoughts.findOneAndUpdate({_id: req.params.thoughtId}, {$addToSet: {reactions: req.body}}, {runValidators: true, new: true})
@@ -61,8 +99,8 @@ module.exports = {
             .then((reactions)=>
 
                 !reactions
-                ? res.status(404).json({message: "No thought found with this ID"})
-                : res.json(reactions)
+                    ? res.status(404).json({message: "No thought found with this ID"})
+                    : res.json(reactions)
 
             )
 
@@ -77,8 +115,8 @@ module.exports = {
             .then((reactions)=>
 
                 !reactions
-                ? res.status(404).json({message: "No Thought or Reaction found with this ID"})
-                : res.json(reactions)
+                    ? res.status(404).json({message: "No thought found with this ID"})
+                    : res.json(reactions)
                 
             )
 
