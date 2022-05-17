@@ -25,6 +25,65 @@ module.exports = {
 
     },
 
-    // create thoughts and reactions, create delete reaction function
+    createThought(req, res) {
+
+        Thoughts.create(req.body)
+
+            .then((thoughts) => {
+
+                return User.findOneAndUpdate(
+                    { username: req.body.username },
+                    { $push: { thoughts: thoughts._id } },
+                    { new: true }
+                );
+
+            })
+
+            .then((user) =>
+
+                !user
+                    ? res
+                        .status(404)
+                        .json({ message: 'No user found with this ID' })
+                    : res.json({ message: 'Thought has been created!' })
+                )
+
+            .catch((err) => {
+                console.error(err);
+            });
+
+    },
+
+    createReaction(req, res) {
+
+        Thoughts.findOneAndUpdate({_id: req.params.thoughtId}, {$addToSet: {reactions: req.body}}, {runValidators: true, new: true})
+            
+            .then((reactions)=>
+
+                !reactions
+                ? res.status(404).json({message: "No thought found with this ID"})
+                : res.json(reactions)
+
+            )
+
+        .catch((err)=> res.status(500).json(err));
+
+    },
+
+    deleteReaction(req, res) {
+    
+        Thoughts.findOneAndUpdate({_id: req.params.thoughtId}, {$pull: {reactions: { reactionId: req.body.reactionId }}}, {runValidators: true, new: true})
+    
+            .then((reactions)=>
+
+                !reactions
+                ? res.status(404).json({message: "No Thought or Reaction found with this ID"})
+                : res.json(reactions)
+                
+            )
+
+        .catch((err)=> res.status(500).json(err)); 
+        
+    }
 
 };
