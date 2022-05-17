@@ -20,7 +20,7 @@ module.exports = {
                 !thoughts
                     ? res.status(404).json({ message: 'No thoughts found with that id' })
                     : res.json(thoughts)
-                    
+
             )
 
             .catch((err) => res.status(500).json(err));
@@ -70,6 +70,7 @@ module.exports = {
                 !thought
                     ? res.status(404).json({message: "No thought found with this ID"})
                     : res.json(thought)
+                    
             )
 
           .catch((err)=> res.status(500).json(err));
